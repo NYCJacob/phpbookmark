@@ -6,6 +6,9 @@
  * Time: 9:47 PM
  */
 
+// const for save file location on server
+define('USERDIR', '/home/vagrant/www/user.temp/');
+
 function isValidUrl($url){
     // first do some quick sanity checks:
     if(!$url || !is_string($url)){
@@ -24,20 +27,21 @@ function isValidUrl($url){
     return true;
 }
 
-function getHttpResponseCode_using_curl($url, $followredirects = true){
+function getHttpResponseCode_using_curl($url, $followredirects = true, $saveFile = true ){
     // returns int responsecode, or false (if url does not exist or connection timeout occurs)
     // NOTE: could potentially take up to 0-30 seconds , blocking further code execution (more or less depending on connection, target site, and local timeout settings))
     // if $followredirects == false: return the FIRST known httpcode (ignore redirects)
     // if $followredirects == true : return the LAST  known httpcode (when redirected)
-    if(! $url || ! is_string($url)){
-        return false;
-    }
+//    if(! $url || ! is_string($url)){
+//        return false;
+//    }
+    var_dump($url);
     $ch = @curl_init($url);
     if($ch === false){
         return false;
     }
     @curl_setopt($ch, CURLOPT_HEADER         ,true);    // we want headers
-    @curl_setopt($ch, CURLOPT_NOBODY         ,true);    // dont need body
+//    @curl_setopt($ch, CURLOPT_NOBODY         ,true);    // dont need body
     @curl_setopt($ch, CURLOPT_RETURNTRANSFER ,true);    // catch output (do NOT print!)
     if($followredirects){
         @curl_setopt($ch, CURLOPT_FOLLOWLOCATION ,true);
@@ -45,9 +49,17 @@ function getHttpResponseCode_using_curl($url, $followredirects = true){
     }else{
         @curl_setopt($ch, CURLOPT_FOLLOWLOCATION ,false);
     }
-//      @curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);   // fairly random number (seconds)... but could prevent waiting forever to get a result
-//      @curl_setopt($ch, CURLOPT_TIMEOUT        ,6);   // fairly random number (seconds)... but could prevent waiting forever to get a result
-//      @curl_setopt($ch, CURLOPT_USERAGENT      ,"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");   // pretend we're a regular browser
+    if($saveFile){
+        // use timestamp as file name
+        $urlFileName = time() . '.txt';
+        $fp = fopen(USERDIR . $urlFileName, "w");
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+    }
+
+
+      @curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);   // fairly random number (seconds)... but could prevent waiting forever to get a result
+      @curl_setopt($ch, CURLOPT_TIMEOUT        ,6);   // fairly random number (seconds)... but could prevent waiting forever to get a result
+      @curl_setopt($ch, CURLOPT_USERAGENT      ,"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");   // pretend we're a regular browser
     @curl_exec($ch);
     if(@curl_errno($ch)){   // should be 0
         @curl_close($ch);
@@ -57,6 +69,7 @@ function getHttpResponseCode_using_curl($url, $followredirects = true){
     @curl_close($ch);
     return $code;
 }
+
 
 function getHttpResponseCode_using_getheaders($url, $followredirects = true){
     // returns string responsecode, or false if no responsecode found in headers (or url does not exist)
@@ -86,3 +99,16 @@ function getHttpResponseCode_using_getheaders($url, $followredirects = true){
     // no headers :
     return false;
 }
+
+
+
+// this saves to file
+//$ch = curl_init($new_url);
+//$fp = fopen("/home/vagrant/www/user.temp/newUrl.html", "w");
+//
+//curl_setopt($ch, CURLOPT_FILE, $fp);
+//curl_setopt($ch, CURLOPT_HEADER, TRUE);
+//
+//curl_exec($ch);
+//curl_close($ch);
+//fclose($fp);

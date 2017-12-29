@@ -18,24 +18,12 @@
     }
 
     // check URL is valid
-      if (!(@fopen($new_url, 'r'))) {
-      throw new Exception('Not a valid URL.');
-    }
+//      if (!(@fopen($new_url, 'r'))) {
+//      throw new Exception('Not a valid URL.');
+//    }
 
     // better check URL is valid
-
-
-      // this saves to file
-      $ch = curl_init($new_url);
-      $fp = fopen("newUrl.html", "w");
-
-      curl_setopt($ch, CURLOPT_FILE, $fp);
-      curl_setopt($ch, CURLOPT_HEADER, TRUE);
-
-      curl_exec($ch);
-      curl_close($ch);
-      fclose($fp);
-
+    $urlReturnCode = isValidUrl($new_url);
 
 
     // try to add bm
