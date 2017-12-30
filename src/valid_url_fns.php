@@ -19,12 +19,10 @@ function isValidUrl($url){
         return false;
     }
     // the next bit could be slow:
-    if(getHttpResponseCode_using_curl($url) != 200){
+//        if(getHttpResponseCode_using_curl($url) != 200){
 //      if(getHttpResponseCode_using_getheaders($url) != 200){  // use this one if you cant use curl
-        return false;
-    }
-    // all good!
-    return true;
+    $urlResponseArray = getHttpResponseCode_using_curl($url);
+    return $urlResponseArray;
 }
 
 function getHttpResponseCode_using_curl($url, $followredirects = true, $saveFile = true ){
@@ -35,7 +33,7 @@ function getHttpResponseCode_using_curl($url, $followredirects = true, $saveFile
 //    if(! $url || ! is_string($url)){
 //        return false;
 //    }
-    var_dump($url);
+
     $ch = @curl_init($url);
     if($ch === false){
         return false;
@@ -51,7 +49,7 @@ function getHttpResponseCode_using_curl($url, $followredirects = true, $saveFile
     }
     if($saveFile){
         // use timestamp as file name
-        $urlFileName = time() . '.txt';
+        $urlFileName = time() . '.html';
         $fp = fopen(USERDIR . $urlFileName, "w");
         curl_setopt($ch, CURLOPT_FILE, $fp);
     }
@@ -67,7 +65,10 @@ function getHttpResponseCode_using_curl($url, $followredirects = true, $saveFile
     }
     $code = @curl_getinfo($ch, CURLINFO_HTTP_CODE); // note: php.net documentation shows this returns a string, but really it returns an int
     @curl_close($ch);
-    return $code;
+
+    $responseArray = compact("code","urlFileName");
+//    return $code;
+    return $responseArray;
 }
 
 

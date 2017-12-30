@@ -23,8 +23,12 @@
 //    }
 
     // better check URL is valid
-    $urlReturnCode = isValidUrl($new_url);
+    $urlReturnArray = isValidUrl($new_url);
+    if($urlReturnArray['code'] != 200){
+        throw new Exception("Not a valid URL.");
+    }
 
+    $urlDom = parseDom($urlReturnArray['urlFileName']);
 
     // try to add bm
     add_bm($new_url);

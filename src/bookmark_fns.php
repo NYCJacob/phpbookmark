@@ -7,4 +7,5 @@
   require_once('output_fns.php');
   require_once('url_fns.php');
   require_once('valid_url_fns.php');
+  require_once('parse_dom_fns.php');
 ?>
