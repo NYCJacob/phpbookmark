@@ -6,6 +6,7 @@ It is a simple web bookmark app.
 are used based on this [stackoverflow post](https://stackoverflow.com/questions/2280394/how-can-i-check-if-a-url-exists-via-php)
 
 **TODO**
+- move mysql login code outside of domain
 - better input validation
 - bookmark tags (a la firefox bookmarks)
 - browser bookmark import

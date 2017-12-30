@@ -6,14 +6,14 @@
  * Time: 5:33 PM
  */
 
-function parseDom($fileName){
 
+function parseDom($fileName){
     $urlHtml = file_get_contents( USERDIR . $fileName);
     $dom = new DOMDocument;
     @$dom->loadHTML($urlHtml);
     $urlTitle = $dom->getElementsByTagName('title');
-
-    //TODO: need to extract text of title dom node here
+    // there is only one title tag nodelist length = 1
+    $urlTitleText = $urlTitle->item(0)->nodeValue;
 
     $urlMetaTags = $dom->getElementsByTagName('meta');
     foreach ($urlMetaTags as $metaTag){
@@ -26,6 +26,6 @@ function parseDom($fileName){
     }
     // strip out content attribute text
     preg_match( '/content="(.*?)"/', $urlDescription, $matches);
-    $urlMetaArray = array('title' => $urlTitle, 'description' => $matches[1]);
+    $urlMetaArray = array('title' => $urlTitleText, 'description' => $matches[1]);
     return $urlMetaArray;
 }

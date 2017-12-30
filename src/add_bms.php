@@ -29,9 +29,10 @@
     }
 
     $urlDom = parseDom($urlReturnArray['urlFileName']);
-
+    $urlDom['url'] = $new_url;
     // try to add bm
-    add_bm($new_url);
+//    add_bm($new_url);
+    add_bm($urlDom);
     echo 'Bookmark added.';
 
     // get the bookmarks this user has saved
