@@ -1,11 +1,13 @@
 <?php
 require_once('db_fns.php');
 
+//TODO: need to convert to prepared statements
+
 function get_user_urls($username) {
   //extract from the database all the URLs this user has stored
 
   $conn = db_connect();
-  $result = $conn->query("select bm_URL
+  $result = $conn->query("select bm_URL, title, description
                           from bookmark
                           where username = '".$username."'");
   if (!$result) {
@@ -15,7 +17,7 @@ function get_user_urls($username) {
   //create an array of the URLs
   $url_array = array();
   for ($count = 1; $row = $result->fetch_row(); ++$count) {
-    $url_array[$count] = $row[0];
+    $url_array[$count] = $row;
   }
   return $url_array;
 }

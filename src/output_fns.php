@@ -127,10 +127,10 @@ function display_user_urls($url_array) {
 ?>
   <br>
   <form name="bm_table" action="delete_bms.php" method="post">
-  <table width="300" cellpadding="2" cellspacing="0">
+  <table width="600" cellpadding="2" cellspacing="0">
   <?php
   $color = "#cccccc";
-  echo "<tr bgcolor=\"".$color."\"><td><strong>Bookmark</strong></td>";
+  echo "<tr bgcolor=\"".$color."\"><td><strong>Bookmark</strong></td><td><strong>Title</strong></td><td><strong>Description</strong></td>";
   echo "<td><strong>Delete?</strong></td></tr>";
   if ((is_array($url_array)) && (count($url_array) > 0)) {
     foreach ($url_array as $url)  {
@@ -139,11 +139,20 @@ function display_user_urls($url_array) {
       } else {
         $color = "#cccccc";
       }
+      // set array items to var to avoid array to string conversion error
+        $urlString = $url[0];
+        $titleString = $url[1];
+        $descriptionString = $url[2];
+
       //remember to call htmlspecialchars() when we are displaying user data
-      echo "<tr bgcolor=\"".$color."\"><td><a href=\"".$url."\">".htmlspecialchars($url)."</a></td>
-            <td><input type=\"checkbox\" name=\"del_me[]\"
-                value=\"".$url."\"></td>
-            </tr>";
+      echo "<tr bgcolor=\"".$color."\"><td><a href=\"".$urlString."\">". htmlspecialchars($urlString) ."</a></td>
+            
+                <td>". htmlspecialchars($titleString). "</td>
+            <td>". htmlspecialchars($descriptionString)." </td> 
+             <td><input type=\"checkbox\" name=\"del_me[]\"
+                value=\"".$urlString."\"></td>
+            </tr> ";
+
     }
   } else {
     echo "<tr><td>No bookmarks on record</td></tr>";

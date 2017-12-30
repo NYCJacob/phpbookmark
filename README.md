@@ -7,6 +7,7 @@ are used based on this [stackoverflow post](https://stackoverflow.com/questions/
 
 **TODO**
 - move mysql login code outside of domain
+- need to convert sql to prepared statements
 - better input validation
 - bookmark tags (a la firefox bookmarks)
 - browser bookmark import
