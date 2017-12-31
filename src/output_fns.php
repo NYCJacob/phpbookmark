@@ -183,6 +183,13 @@ function display_user_menu() {
 <a href="logout.php">Logout</a>
 <hr>
 
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+<!--        <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />-->
+        <label for="the_file">Upload a bookmark export html file:</label>
+        <input type="file" name="user_bookmarks_file" id="user_bm_file"/>
+        <input type="submit" value="Upload File"/>
+    </form>
+
 <?php
 }
 

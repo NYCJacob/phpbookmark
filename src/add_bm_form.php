@@ -4,7 +4,7 @@ require_once('bookmark_fns.php');
 session_start();
 
 // start output html
-do_html_header('Add Bookmarks');
+do_html_header('Add Bookmarks.json');
 
 check_valid_user();
 display_add_bm_form();
