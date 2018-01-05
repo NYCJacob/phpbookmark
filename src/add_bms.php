@@ -30,7 +30,8 @@
 
     $urlDom = parseDom($urlReturnArray['urlFileName']);
     $urlDom['url'] = $new_url;
-    // try to add bm
+
+    // try to add bm to database
 //    add_bm($new_url);
     add_bm($urlDom);
     echo 'Bookmark added.';

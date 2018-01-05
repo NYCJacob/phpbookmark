@@ -29,3 +29,61 @@ function parseDom($fileName){
     $urlMetaArray = array('title' => $urlTitleText, 'description' => $matches[1]);
     return $urlMetaArray;
 }
+
+function bm_importer($file){
+    $uploadedHtml = file_get_contents( $file );
+    $uploadeDom = new DOMDocument;
+    @$uploadeDom->loadHTML($uploadedHtml);
+
+    //  see https://stackoverflow.com/questions/18182857/using-php-dom-document-to-select-html-element-by-its-class-and-get-its-text
+    $xpath     = new DOMXPath($uploadeDom);
+// need to get DL>P>DT  tags
+//  then H3 is a folder name
+// another nested DL>p>dt are the bookmarks
+    $elements = $xpath->query("//dl");
+//    need to parse through xpath
+
+// this is from php manual example  http://php.net/manual/en/class.domxpath.php
+    if (!is_null($elements)) {
+        $bmExtractedArray = array();
+
+        foreach ($elements as $element) {
+            echo "<br/>[". $element->nodeName. "]";
+            $nodes = $element->childNodes;
+            foreach ($nodes as $node) {
+                echo $node->nodeValue. "\n";
+                $bmExtractedArray[] = extractBookmark($node);
+            }
+        }
+    }
+    echo $bmExtractedArray;
+}
+
+function extractBookmark(DOMElement $nodeElement){
+    $bmCategory= null;
+    $bmName= null;
+    $bmLink= null;
+
+    // array to store bm info
+    $bmExtracted = array();
+
+    // only process dt tags
+    if ($nodeElement->tagName !== 'dt' || !$nodeElement->hasChildNodes() ){
+        return 0;
+    }
+    // check dt first child
+    $firstchildTag = $nodeElement->firstChild->tagName;
+
+    // h3 indicates bookmark folder/category
+    if ($firstchildTag === 'h3'|| 'H3'){
+        $bmCategory = $nodeElement->firstChild->nodeValue;
+    }
+    if ($firstchildTag === 'a'||'A'){
+        $bmName = $nodeElement->firstChild->nodeValue;
+        $bmLink = $nodeElement->firstChild->attributes->item(0)->nodeValue;
+    }
+    $bmExtracted= [$bmCategory, $bmName, $bmLink];
+    return $bmExtracted;
+}
+
+

@@ -12,3 +12,4 @@ are used based on this [stackoverflow post](https://stackoverflow.com/questions/
 - bookmark tags (a la firefox bookmarks)
 - browser bookmark import
 - export to browser bookmark
+- implement upload_fns for file checks
