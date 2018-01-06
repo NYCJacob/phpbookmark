@@ -48,10 +48,9 @@ function bm_importer($file){
         $bmExtractedArray = array();
 
         foreach ($elements as $element) {
-            echo "<br/>[". $element->nodeName. "]";
             $nodes = $element->childNodes;
             foreach ($nodes as $node) {
-                echo $node->nodeValue. "\n";
+                $nodeArray[] =  $node->nodeValue;
                 $bmExtractedArray[] = extractBookmark($node);
             }
         }
@@ -60,12 +59,14 @@ function bm_importer($file){
 }
 
 function extractBookmark(DOMElement $nodeElement){
-    $bmCategory= null;
-    $bmName= null;
-    $bmLink= null;
+    // string variable for bookmark
+    $bmName= '';
+    $bmLink= '';
+    $categoryArray = [];
+    static $bmCategory = '';
 
     // array to store bm info
-    $bmExtracted = array();
+    $bmExtracted = [];
 
     // only process dt tags
     if ($nodeElement->tagName !== 'dt' || !$nodeElement->hasChildNodes() ){
@@ -75,15 +76,25 @@ function extractBookmark(DOMElement $nodeElement){
     $firstchildTag = $nodeElement->firstChild->tagName;
 
     // h3 indicates bookmark folder/category
-    if ($firstchildTag === 'h3'|| 'H3'){
+    // go down node
+    if ($firstchildTag === 'h3' ){
         $bmCategory = $nodeElement->firstChild->nodeValue;
+        // get links under this folder designated by an H3 tag
+        foreach( $nodeElement as $node){
+            $categoryArray[] = $node->nodeValue;
+        }
+        return $categoryArray;
     }
-    if ($firstchildTag === 'a'||'A'){
+    if ($firstchildTag === 'a' ) {
         $bmName = $nodeElement->firstChild->nodeValue;
         $bmLink = $nodeElement->firstChild->attributes->item(0)->nodeValue;
     }
-    $bmExtracted= [$bmCategory, $bmName, $bmLink];
+    $bmExtracted[] = ['category'=> $bmCategory, 'name'=> $bmName, 'link'=> $bmLink];
     return $bmExtracted;
+
 }
 
 
+function processBmList($node){
+
+}
