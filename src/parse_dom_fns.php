@@ -30,71 +30,71 @@ function parseDom($fileName){
     return $urlMetaArray;
 }
 
-function bm_importer($file){
-    $uploadedHtml = file_get_contents( $file );
-    $uploadeDom = new DOMDocument;
-    @$uploadeDom->loadHTML($uploadedHtml);
+function bm_importer($file)
+{
+    $bmArray = [];
 
-    //  see https://stackoverflow.com/questions/18182857/using-php-dom-document-to-select-html-element-by-its-class-and-get-its-text
-    $xpath     = new DOMXPath($uploadeDom);
-// need to get DL>P>DT  tags
-//  then H3 is a folder name
-// another nested DL>p>dt are the bookmarks
-    $elements = $xpath->query("//dl");
-//    need to parse through xpath
+    $uploadedHtml = file_get_contents($file);
+    $doc = new DOMDocument;
+    $doc->loadHTML($uploadedHtml);
 
-// this is from php manual example  http://php.net/manual/en/class.domxpath.php
+    // from php manual
+// example 1:
+    $elements = $doc->getElementsByTagName('*');
+// example 2:
+//    $elements2 = $doc->getElementsByTagName('html');
+// example 3:
+//$elements = $doc->getElementsByTagName('body');
+// example 4:
+//$elements4 = $doc->getElementsByTagName('table');
+// example 5:
+//$elements5 = $doc->getElementsByTagName('div');
+
+    // category pulled from H3 text
+    $bmCategory = '';
+    // bm lists are with two unclosed <p> tags
+    // a second p indicated folder list ended.
+    // this was needed to caption Other Bookmarks
+    //TODO: there must be a better way :(
+    $pCount = 0;
+
     if (!is_null($elements)) {
-        $bmExtractedArray = array();
-
         foreach ($elements as $element) {
-            $nodes = $element->childNodes;
-            foreach ($nodes as $node) {
-                $nodeArray[] =  $node->nodeValue;
-                $bmExtractedArray[] = extractBookmark($node);
+            $bmLink = '';
+
+            $elName = $element->nodeName;
+            $nodeNames[] = $elName;
+            if ($elName === 'h3'){
+                    $bmCategory = $element->nodeValue;
+                }
+            if ($elName === 'a') {
+                    $bmLink = $element->nodeValue;
+                    $bmArray[] = array( 'category' => $bmCategory, 'link' => $bmLink );
+                }
+            if ( $elName === 'p'){
+                $pCount += 1;
             }
+            if ($pCount === 2){
+                $bmCategory = '';
+                $pCount = 0;
+            }
+
+//            $nodes = $element->childNodes;
+//            foreach ($nodes as $node) {
+//                // if <dt><h3> this is a folder designation
+//                if ($node->tagName === 'h3'){
+//                    $bmCategory = $node->nodeValue;
+//                }
+//                if ($node->tagName === 'a') {
+//                    $bmLink = $node->nodeValue;
+//                    $bmArray[] = array( 'category' => $bmCategory, 'link' => $bmLink );
+//                }
+//
+////                ${ $element->nodeName . 'children' }[] = $node->nodeValue;
+//
+//            }
         }
     }
-    echo $bmExtractedArray;
-}
 
-function extractBookmark(DOMElement $nodeElement){
-    // string variable for bookmark
-    $bmName= '';
-    $bmLink= '';
-    $categoryArray = [];
-    static $bmCategory = '';
-
-    // array to store bm info
-    $bmExtracted = [];
-
-    // only process dt tags
-    if ($nodeElement->tagName !== 'dt' || !$nodeElement->hasChildNodes() ){
-        return 0;
-    }
-    // check dt first child
-    $firstchildTag = $nodeElement->firstChild->tagName;
-
-    // h3 indicates bookmark folder/category
-    // go down node
-    if ($firstchildTag === 'h3' ){
-        $bmCategory = $nodeElement->firstChild->nodeValue;
-        // get links under this folder designated by an H3 tag
-        foreach( $nodeElement as $node){
-            $categoryArray[] = $node->nodeValue;
-        }
-        return $categoryArray;
-    }
-    if ($firstchildTag === 'a' ) {
-        $bmName = $nodeElement->firstChild->nodeValue;
-        $bmLink = $nodeElement->firstChild->attributes->item(0)->nodeValue;
-    }
-    $bmExtracted[] = ['category'=> $bmCategory, 'name'=> $bmName, 'link'=> $bmLink];
-    return $bmExtracted;
-
-}
-
-
-function processBmList($node){
-
+    return $bmArray;
 }
