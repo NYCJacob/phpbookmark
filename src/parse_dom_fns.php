@@ -39,16 +39,8 @@ function bm_importer($file)
     $doc->loadHTML($uploadedHtml);
 
     // from php manual
-// example 1:
     $elements = $doc->getElementsByTagName('*');
-// example 2:
-//    $elements2 = $doc->getElementsByTagName('html');
-// example 3:
-//$elements = $doc->getElementsByTagName('body');
-// example 4:
-//$elements4 = $doc->getElementsByTagName('table');
-// example 5:
-//$elements5 = $doc->getElementsByTagName('div');
+
 
     // category pulled from H3 text
     $bmCategory = '';
@@ -68,8 +60,9 @@ function bm_importer($file)
                     $bmCategory = $element->nodeValue;
                 }
             if ($elName === 'a') {
-                    $bmLink = $element->nodeValue;
-                    $bmArray[] = array( 'category' => $bmCategory, 'link' => $bmLink );
+                    $bmName = $element->nodeValue;
+                    $bmLink = $element->attributes->item(0)->nodeValue;
+                    $bmArray[] = array( 'category' => $bmCategory, 'link' => $bmLink, 'name' => $bmName );
                 }
             if ( $elName === 'p'){
                 $pCount += 1;
@@ -79,20 +72,6 @@ function bm_importer($file)
                 $pCount = 0;
             }
 
-//            $nodes = $element->childNodes;
-//            foreach ($nodes as $node) {
-//                // if <dt><h3> this is a folder designation
-//                if ($node->tagName === 'h3'){
-//                    $bmCategory = $node->nodeValue;
-//                }
-//                if ($node->tagName === 'a') {
-//                    $bmLink = $node->nodeValue;
-//                    $bmArray[] = array( 'category' => $bmCategory, 'link' => $bmLink );
-//                }
-//
-////                ${ $element->nodeName . 'children' }[] = $node->nodeValue;
-//
-//            }
         }
     }
 
