@@ -13,3 +13,7 @@ are used based on this [stackoverflow post](https://stackoverflow.com/questions/
 - browser bookmark import
 - export to browser bookmark
 - implement upload_fns for file checks
+
+**Acknowledgements**
+- mysql implode array insert technique
+https://stackoverflow.com/questions/779986/insert-multiple-rows-via-a-php-array-into-mysql#780046

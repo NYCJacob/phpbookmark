@@ -51,6 +51,29 @@ function add_bm(array $new_url) {
   return true;
 }
 
+// receives array of link, name, category
+// extracted from a uploaded bookmark file
+// returns true on success or throws E
+function add_bm_file(array $bm_uploaded){
+    echo "Attempting to add bookmark file to database<br />";
+    $valid_user = $_SESSION['valid_user'];
+
+
+    $conn = db_connect();
+
+//  see this SO for implode technique https://stackoverflow.com/questions/779986/insert-multiple-rows-via-a-php-array-into-mysql#780046
+
+    $sql = array();
+    foreach( $bm_uploaded as $row ) {
+        $bmName = mysqli_real_escape_string($row['name']);
+        $bmLink = mysqli_real_escape_string($row['link']);
+        $bmCategory = mysqli_real_escape_string($row['category']);
+
+        $sql[] = '("'.$bmName.'", '.$bmLink.' , '.$bmCategory.')';
+    }
+    $conn->query('INSERT INTO bookmark (username, bm_URL, title, description, category) VALUES '.implode(',', $sql));
+}
+
 function delete_bm($user, $url) {
   // delete one URL from the database
   $conn = db_connect();

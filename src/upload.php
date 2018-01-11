@@ -12,7 +12,7 @@ ob_start();
   if (is_uploaded_file($_FILES['user_bookmarks_file']['tmp_name']))
   {
      move_uploaded_file($_FILES['user_bookmarks_file']['tmp_name'], $uploaded_file);
-     bm_importer($uploaded_file);
+     $bmArray = bm_importer($uploaded_file);
   }
     header('Location: member.php?'. htmlspecialchars(SID));
     ob_end_flush();

@@ -32,6 +32,8 @@ function parseDom($fileName){
 
 function bm_importer($file)
 {
+    $valid_user = $_SESSION['valid_user'];
+
     $bmArray = [];
 
     $uploadedHtml = file_get_contents($file);
@@ -58,18 +60,24 @@ function bm_importer($file)
             $nodeNames[] = $elName;
             if ($elName === 'h3'){
                     $bmCategory = $element->nodeValue;
+                    $pCount = 0;
                 }
             if ($elName === 'a') {
                     $bmName = $element->nodeValue;
                     $bmLink = $element->attributes->item(0)->nodeValue;
-                    $bmArray[] = array( 'category' => $bmCategory, 'link' => $bmLink, 'name' => $bmName );
+                    // conforming to mysql table schema
+                    $bmArray[] = array( 'username' =>  $valid_user,
+                                        'bm_URL' => $bmLink,
+                                        'title' => $bmName,
+                                        'description' => null,
+                                        'category' => $bmCategory );
                 }
             if ( $elName === 'p'){
                 $pCount += 1;
             }
             if ($pCount === 2){
-                $bmCategory = '';
-                $pCount = 0;
+                $bmCategory = 'Other Bookmarks';
+                $pCount = 1;   // there is an extra p before listing starts then it is every two p per category
             }
 
         }
