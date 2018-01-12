@@ -62,16 +62,24 @@ function add_bm_file(array $bm_uploaded){
     $conn = db_connect();
 
 //  see this SO for implode technique https://stackoverflow.com/questions/779986/insert-multiple-rows-via-a-php-array-into-mysql#780046
+//   $sql[] = '("'.mysql_real_escape_string($row['text']).'", '.$row['category_id'].')';
 
     $sql = array();
     foreach( $bm_uploaded as $row ) {
-        $bmName = mysqli_real_escape_string($row['name']);
-        $bmLink = mysqli_real_escape_string($row['link']);
-        $bmCategory = mysqli_real_escape_string($row['category']);
+        $bmUser = mysqli_real_escape_string($conn, $row['username']);
+        $bmTitle = mysqli_real_escape_string($conn, $row['title']);
+        $bmDescription = mysqli_real_escape_string($conn, $row['description']);
+        $bmLink = mysqli_real_escape_string($conn, $row['bm_URL']);
+        $bmCategory = mysqli_real_escape_string($conn, $row['category']);
 
-        $sql[] = '("'.$bmName.'", '.$bmLink.' , '.$bmCategory.')';
+        $sql[] = '("'. $bmUser.'",  '. $bmLink.', '.$bmTitle.','. $bmDescription.', '.$bmCategory.')';
+        $imploded = implode(',', $sql);
+
     }
-    $conn->query('INSERT INTO bookmark (username, bm_URL, title, description, category) VALUES '.implode(',', $sql));
+    if ( !$conn->query('INSERT INTO bookmark (username, bm_URL, title, description, category) VALUES '.implode(',', $sql)) ){
+        throw new Exception('Bookmark file could not be imported');
+    }
+    return true;
 }
 
 function delete_bm($user, $url) {

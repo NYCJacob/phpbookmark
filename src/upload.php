@@ -13,6 +13,8 @@ ob_start();
   {
      move_uploaded_file($_FILES['user_bookmarks_file']['tmp_name'], $uploaded_file);
      $bmArray = bm_importer($uploaded_file);
+     // save extracted array to db
+      add_bm_file($bmArray);
   }
     header('Location: member.php?'. htmlspecialchars(SID));
     ob_end_flush();
