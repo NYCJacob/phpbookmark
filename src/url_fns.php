@@ -72,9 +72,17 @@ function add_bm_file(array $bm_uploaded){
         $bmLink = mysqli_real_escape_string($conn, $row['bm_URL']);
         $bmCategory = mysqli_real_escape_string($conn, $row['category']);
 
-        $sql[] = '("'. $bmUser.'",  '. $bmLink.', '.$bmTitle.','. $bmDescription.', '.$bmCategory.')';
-        $imploded = implode(',', $sql);
+//        $sql[] = '("'. $bmUser.'",  '. $bmLink.', '.$bmTitle.','. $bmDescription.', '.$bmCategory.')';
 
+//        $sql[] = "(' ". $bmUser. "',"   "'".$bmLink. "',"  "'".$bmTitle."'",  "'".$bmDescription."'" , "'".$bmCategory."')" ;
+        $sql[] =  '("'
+            .mysqli_real_escape_string($conn, $row['username']).'", "'
+            .mysqli_real_escape_string($conn, $row['title']).'", "'
+            .mysqli_real_escape_string($conn, $row['description']).'", "'
+            .mysqli_real_escape_string($conn, $row['bm_URL']).'","'
+            .mysqli_real_escape_string($conn, $row['category']).'" )';
+
+        $imploded = implode(',', $sql);
     }
     if ( !$conn->query('INSERT INTO bookmark (username, bm_URL, title, description, category) VALUES '.implode(',', $sql)) ){
         throw new Exception('Bookmark file could not be imported');
